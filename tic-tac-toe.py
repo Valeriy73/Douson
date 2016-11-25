@@ -63,9 +63,9 @@ def new_board():
 def display_board(board):
     """ Отображает игровую доску на экране."""
     print("\n\t{0}|{1}|{2}".format(board[0], board[1], board[2]))
-    print("\t--------")
+    print("\t-----")
     print("\t{0}|{1}|{2}".format(board[3], board[4], board[5]))
-    print("\t--------")
+    print("\t-----")
     print("\t{0}|{1}|{2}\n".format(board[6], board[7], board[8]))
 
 def legal_moves(board):
@@ -133,10 +133,10 @@ def computer_move(board, computer, human):
         board[move] = EMPTY
     # поскольку следующим ходом ни одна сторона не может победить,
     # выберем лучшее из доступных полей
-        for move in BEST_MOVES:
-            if move in legal_moves(board):
-                print(move)
-                return move
+    for move in BEST_MOVES:
+        if move in legal_moves(board):
+            print(move)
+            return move
 def next_turn(turn):
     """  Осуществляет переход хода. """
     if turn == X:
