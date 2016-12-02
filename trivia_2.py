@@ -73,6 +73,9 @@ def save_record(name_player, scope):
                 text[pos+1] = str(scope)+"\n"
                 break
             pos += 1
+        else:
+            text.append(name_player+"\n")
+            text.append(str(scope)+"\n")
     s = open("record.txt", "w", encoding='utf-8')
     s.writelines(text)
     s.close()
