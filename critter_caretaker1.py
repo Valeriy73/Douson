@@ -34,9 +34,9 @@ class Critter(object):
         self.__pass_time()
 
     def __eat_col(self):
-        col_crecer = 2
-        while (col_crecer > 0 and col_crecer < 5):
-            col_crecer = int (raw_input("Сколько печенюшек вы хотите дать (от 1 до 4):"))
+        col_crecer = 0
+        while not (0 < col_crecer < 5):
+            col_crecer = int (raw_input("Сколько печенюшек вы хотите дать (от 1 до 4)?:"))
             if col_crecer < 1:
                 print "Ты жадина!!!"
             elif col_crecer >4:
@@ -51,7 +51,18 @@ class Critter(object):
             self.hunger = 0
         self.__pass_time
 
-    def play(self, fun=4):
+    def play_time(self):
+        time = 0
+        while not (0 < time < 5):
+            time = int (raw_input("Сколько минут ты со мной поиграешь (от 1 до 4)?: "))
+            if time < 1:
+                print "Ты не хочешь со мной играть?"
+            elif time > 4:
+                print "{name} устал, я не могу так долго играть".format (name = self.name)
+        return time
+
+    def play(self):
+        fun = self.play_time()
         print "Уиии!"
         self.boredom -= fun
         if self.boredom < 0:
