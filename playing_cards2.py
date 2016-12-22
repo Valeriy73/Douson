@@ -53,7 +53,7 @@ class Deck(Hand):
 
     def shuffle(self):
         import random
-        random.shuffle(self, cards)
+        random.shuffle(self.cards)
 
     def deal(self, hands, per_hand=1):
         for rounds in xrange(per_hand):
@@ -81,4 +81,22 @@ deck1.shuffle()
 
 print "\nКолода перемешена."
 print "Вот как она выглядит теперь:"
-print deck1        
+print deck1
+
+my_hand = Hand()
+your_hand = Hand()
+hands = [my_hand, your_hand]
+deck1.deal(hands, per_hand = 5)
+
+print "\nМне и вам на руки роздано по 5 карт."
+print "У меня на руках:"
+print my_hand
+print "У вас на руках:"
+print your_hand
+print "Осталось в колоде:"
+print deck1
+
+deck1.clear()
+print "\nКолода очищена"
+print "Вот как она выглядит теперь:", deck1
+raw_input('\n\nНажмите Enter, чтобы выйти.')
