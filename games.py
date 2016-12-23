@@ -21,11 +21,11 @@ def ask_yes_no(questiion):
 		response = raw_input(questiion).lower()
 	return response
 
-def ask_number(questiion, low, high):
+def ask_number(question, low, high):
 	"""Просит ввести число из заданного диапазона"""
 	response = None
 	while response not in range(low, high):
-		response = int(raw_input(questiion))
+		response = int(raw_input(question))
 	return response
 
 if __name__ == "__main__":
