@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-# Киноман
-# демонстрирует применение флажков
+# Киноман-2
+# демонстрирует переключатель
 from Tkinter import *
 
 
 class Application(Frame, object):
-    """ GUI-приложение, позволяющее выбрать любимые жанры кино. """
+    """ GUI-приложение, позволяющее выбрать один любимый жанр кино. """
     def __init__(self, master):
         """ Инициализирует рамку. """
         super(Application, self).__init__(master)
@@ -17,35 +17,39 @@ class Application(Frame, object):
         """ Создает элементы, с помощью которых пользователь будет выбирать. """
         # метка-описание
         Label(self,
-              text="Укажите выши любимые жанры кино"
+              text="Укажите выши любимый жанр кино"
               ).grid(row=0, column=0, sticky=W)
 
         # метка-инструкция
         Label(self,
-              text="Выберите все, что вам по вкусу:"
+              text="Выберите ровно один:"
               ).grid(row=1, column=0, sticky=W)
 
-        # флажок "Комедия"
-        self.likes_comedy = BooleanVar()
-        Checkbutton(self,
+        # переменная для хранения сведений о единственном любимом жанре
+        self.favorite = StringVar()
+        self.favorite.set(None)
+
+        # положение "Комедия" переключателя
+        Radiobutton(self,
                     text ="Комедия",
-                    variable=self.likes_comedy,
+                    variable=self.favorite,
+                    value="комедия.",
                     command=self.update_text
                     ).grid(row=2, column=0, sticky=W)
 
-        # флажок "Драма"
-        self.likes_drama = BooleanVar()
-        Checkbutton(self,
+        # положение "Драма" переключателя
+        Radiobutton(self,
                     text="Драма",
-                    variable=self.likes_drama,
+                    variable=self.favorite,
+                    value="драма.",
                     command=self.update_text
                     ).grid(row=3, column=0, sticky=W)
 
-        # флажок "Фильм о любви"
-        self.likes_romance = BooleanVar()
-        Checkbutton(self,
+        # положение "Фильм о любви" переключателя
+        Radiobutton(self,
                     text="Фильм о любви",
-                    variable=self.likes_romance,
+                    variable=self.favorite,
+                    value="кино о любви.",
                     command=self.update_text
                     ).grid(row=4, column=0, sticky=W)
 
@@ -54,25 +58,16 @@ class Application(Frame, object):
         self.results_txt.grid(row=5, column=0, columnspan=3)
 
     def update_text(self):
-        """ Обновляет текстовый элемент по мере того, как пользователь выбирает свои
-        любимые киножанры. """
-        likes = ""
-
-        if self.likes_comedy.get():
-            likes += "Вам нравятся комедии.\n"
-
-        if self.likes_drama.get():
-            likes += "Вас привлекает жанр драмы.\n"
-
-        if self.likes_romance.get():
-            likes += "Вам по вкусу кино о любви."
+        """ Обновляя текстовую область, вписывает в нее любимый жанр. """
+        message = u"Ваш любимый киножанр - "
+        message += self.favorite.get()
 
         self.results_txt.delete(0.0, END)
-        self.results_txt.insert(0.0, likes)
+        self.results_txt.insert(0.0, message)
 
 # основная часть
 root = Tk()
-root.title("Киноман")
+root.title("Киноман-2")
 app = Application(root)
 root.mainloop()
 
