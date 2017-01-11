@@ -9,6 +9,7 @@ games.init(screen_width=640, screen_height=480, fps=50)
 class Pan(games.Sprite):
     """ Сковорода, в которую игрок может ловить падающую пиццу. """
     image = games.load_image("images/pan.bmp")
+    score = games.Text()
 
     def __init__(self):
         """ Инициализирует объект Pan и создает объект Text для отображения
@@ -16,9 +17,9 @@ class Pan(games.Sprite):
         super(Pan, self).__init__(image=Pan.image,
                                  x=games.mouse.x,
                                  bottom=games.screen.height)
-        self.score = games.Text(value=0, size=25, color=color.black,
+        score = games.Text(value=0, size=25, color=color.black,
                                 top=5, right=games.screen.width-10)
-        games.screen.add(self.score)
+        games.screen.add(score)
 
     def update(self):
         """ Передвигает объект по горизонтали в точку с абсциссой, как у указателя
@@ -33,8 +34,8 @@ class Pan(games.Sprite):
     def check_catch(self):
         """ Проверяет, поймал ли игрок падающую пиццу. """
         for pizza in self.overlapping_sprites:
-            self.score.value += 10
-            self.score.right = games.screen.width - 10
+            score.value += 10
+            score.right = games.screen.width - 10
             pizza.handle_caught()
 
 
@@ -47,7 +48,7 @@ class Pizza(games.Sprite):
         """ Инициализирует объекта Pizza. """
         super(Pizza, self).__init__(image=Pizza.image,
                                     x=x, y=y,
-                                    dy=Pizza.speed)
+                                    dy=Pizza.speed + self.score.value//100)
 
     def update(self):
         """ Провкряет, не коснулась ли нижняя кромка спрайта нижней границы эк-
@@ -99,6 +100,7 @@ class Chef(games.Sprite):
         if self.time_til_drop > 0:
             self.time_til_drop -= 1
         else:
+            speed_new = Pan.score
             new_pizza = Pizza(x=self.x)
             games.screen.add(new_pizza)
         # вне зависимости от скорости падения пиццы "зазор" между падающими кругами
@@ -115,7 +117,7 @@ def main():
     the_pan = Pan()
     games.screen.add(the_pan)
     games.mouse.is_visible = False
-    games.screen.event_grab = True
+    # games.screen.event_grab = True
     games.screen.mainloop()
 
 # поехали

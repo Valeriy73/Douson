@@ -8,12 +8,12 @@ games.init(screen_width=640, screen_height=480, fps=50)
 
 class Pan(games.Sprite):
     """ Сковорода, в которую игрок может ловить падающую пиццу. """
-    image = games.load_image("images\pan.bmp")
+    image = games.load_image("images/pan.bmp")
 
     def __init__(self):
         """ Инициализирует объект Pan и создает объект Text для отображения
         счета. """
-        super(Pan.self).__init__(image=Pan.image,
+        super(Pan, self).__init__(image=Pan.image,
                                  x=games.mouse.x,
                                  bottom=games.screen.height)
         self.score = games.Text(value=0, size=25, color=color.black,
@@ -30,7 +30,7 @@ class Pan(games.Sprite):
             self.right = games.screen.width
         self.check_catch()
 
-    def check_catch():
+    def check_catch(self):
         """ Проверяет, поймал ли игрок падающую пиццу. """
         for pizza in self.overlapping_sprites:
             self.score.value += 10
@@ -40,7 +40,7 @@ class Pan(games.Sprite):
 
 class Pizza(games.Sprite):
     """ Круги пиццы, падающие на землю. """
-    image = games.load_image("images\pizza.bmp")
+    image = games.load_image("images/pizza.bmp")
     speed = 1
 
     def __init__(self, x, y=90):
@@ -74,7 +74,8 @@ class Pizza(games.Sprite):
 
 class Chef(games.Sprite):
     """ Кулинар, который, двигаясь влево-вправо, разбрасывает пиццу. """
-    image = games.load_image("images\chef.bmp")
+    image = games.load_image("images/chef.bmp")
+
     def __init__(self, y=55, speed=2, odds_change=200):
         """ Инициализирует объект Chef. """
         super(Chef, self).__init__(image=Chef.image,
@@ -83,20 +84,35 @@ class Chef(games.Sprite):
                                    dx=speed)
         self.odds_change = odds_change
         self.time_til_drop = 0
-        
+
+    def update(self):
+        """ Определяет, надо ли сменить направление. """
+        if self.left < 0 or self.right > games.screen.width:
+            self.dx = -self.dx
+        elif random.randrange(self.odds_change) == 0:
+            self.dx = -self.dx
+        self.check_drop()
+
+    def check_drop(self):
+        """ Уменьшает интервал ожидания на единицу или сбрасывает очередную пиццу
+         и восстанавливает исходный интервал. """
+        if self.time_til_drop > 0:
+            self.time_til_drop -= 1
+        else:
+            new_pizza = Pizza(x=self.x)
+            games.screen.add(new_pizza)
+        # вне зависимости от скорости падения пиццы "зазор" между падающими кругами
+        #  принимается равным 30% каждого из них по высоте
+            self.time_til_drop = int(new_pizza.height*1.3/Pizza.speed) + 1
+
 
 def main():
-    wall_image = games.load_image("images\wall.jpg", transparent=False)
+    """ Собственно игровой процесс. """
+    wall_image = games.load_image("images/wall.jpg", transparent=False)
     games.screen.background = wall_image
-    pizza_image = games.load_image("images\pizza.bmp")
-    pizza_x = random.randrange(games.screen.width)
-    pizza_y = random.randrange(games.screen.height)
-    the_pizza = Pizza(image=pizza_image, x=pizza_x, y=pizza_y)
-    games.screen.add(the_pizza)
-    pan_image = games.load_image("images\pan.bmp")
-    the_pan = Pan(image = pan_image,
-                  x=games.mouse.x,
-                  y=games.mouse.y)
+    the_chef = Chef()
+    games.screen.add(the_chef)
+    the_pan = Pan()
     games.screen.add(the_pan)
     games.mouse.is_visible = False
     games.screen.event_grab = True

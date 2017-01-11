@@ -16,10 +16,11 @@ class Pizza(games.Sprite):
         if self.bottom > games.screen.height or self.top < 0:
             self.dy = -self.dy
 
+
 def main():
-    wall_image = games.load_image("images\wall.jpg", transparent=False)
+    wall_image = games.load_image("images/wall.jpg", transparent=False)
     games.screen.background = wall_image
-    pizza_image = games.load_image("images\pizza.bmp")
+    pizza_image = games.load_image("images/pizza.bmp")
     the_pizza = Pizza(image=pizza_image,
                       x=games.screen.width/2,
                       y=games.screen.height/2,
