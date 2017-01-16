@@ -9,7 +9,7 @@ games.init(screen_width=640, screen_height=480, fps=50)
 class Pan(games.Sprite):
     """ Сковорода, в которую игрок может ловить падающую пиццу. """
     image = games.load_image("images/pan.bmp")
-    score = games.Text()
+    score_gen = 0
 
     def __init__(self):
         """ Инициализирует объект Pan и создает объект Text для отображения
@@ -17,9 +17,10 @@ class Pan(games.Sprite):
         super(Pan, self).__init__(image=Pan.image,
                                  x=games.mouse.x,
                                  bottom=games.screen.height)
-        score = games.Text(value=0, size=25, color=color.black,
+        self.score = games.Text(value=0, size=25, color=color.black,
                                 top=5, right=games.screen.width-10)
-        games.screen.add(score)
+
+        games.screen.add(self.score)
 
     def update(self):
         """ Передвигает объект по горизонтали в точку с абсциссой, как у указателя
@@ -34,8 +35,9 @@ class Pan(games.Sprite):
     def check_catch(self):
         """ Проверяет, поймал ли игрок падающую пиццу. """
         for pizza in self.overlapping_sprites:
-            score.value += 10
-            score.right = games.screen.width - 10
+            self.score.value += 10
+            Pan.score_gen = self.score.value
+            self.score.right = games.screen.width - 10
             pizza.handle_caught()
 
 
@@ -44,16 +46,18 @@ class Pizza(games.Sprite):
     image = games.load_image("images/pizza.bmp")
     speed = 1
 
-    def __init__(self, x, y=90):
+    def __init__(self, x, y=90, add_speed=0):
         """ Инициализирует объекта Pizza. """
         super(Pizza, self).__init__(image=Pizza.image,
                                     x=x, y=y,
-                                    dy=Pizza.speed + self.score.value//100)
+                                    dy=Pizza.speed + add_speed)
+
 
     def update(self):
         """ Провкряет, не коснулась ли нижняя кромка спрайта нижней границы эк-
         рана. """
         if self.bottom > games.screen.height:
+
             self.end_game()
             self.destroy()
 
@@ -86,6 +90,7 @@ class Chef(games.Sprite):
         self.odds_change = odds_change
         self.time_til_drop = 0
 
+
     def update(self):
         """ Определяет, надо ли сменить направление. """
         if self.left < 0 or self.right > games.screen.width:
@@ -100,8 +105,8 @@ class Chef(games.Sprite):
         if self.time_til_drop > 0:
             self.time_til_drop -= 1
         else:
-            speed_new = Pan.score
-            new_pizza = Pizza(x=self.x)
+            add_speed = (Pan.score_gen//100)/10
+            new_pizza = Pizza(x=self.x, add_speed=add_speed)
             games.screen.add(new_pizza)
         # вне зависимости от скорости падения пиццы "зазор" между падающими кругами
         #  принимается равным 30% каждого из них по высоте
@@ -117,7 +122,7 @@ def main():
     the_pan = Pan()
     games.screen.add(the_pan)
     games.mouse.is_visible = False
-    # games.screen.event_grab = True
+    games.screen.event_grab = True
     games.screen.mainloop()
 
 # поехали
