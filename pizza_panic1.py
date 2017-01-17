@@ -15,8 +15,8 @@ class Pan(games.Sprite):
         """ Инициализирует объект Pan и создает объект Text для отображения
         счета. """
         super(Pan, self).__init__(image=Pan.image,
-                                 x=games.mouse.x,
-                                 bottom=games.screen.height)
+                                  x=games.mouse.x,
+                                  bottom=games.screen.height)
         self.score = games.Text(value=0, size=25, color=color.black,
                                 top=5, right=games.screen.width-10)
 
@@ -36,6 +36,14 @@ class Pan(games.Sprite):
         """ Проверяет, поймал ли игрок падающую пиццу. """
         for pizza in self.overlapping_sprites:
             self.score.value += 10
+            if self.bottom > games.screen.height*0.7:
+                self.bottom = games.screen.height - self.score.value//100*10
+            else:
+                self.bottom = games.screen.height*0.7
+            if not self.score.value%500:
+                chef1 = Chef()
+                games.screen.add(chef1)
+
             Pan.score_gen = self.score.value
             self.score.right = games.screen.width - 10
             pizza.handle_caught()
@@ -120,6 +128,7 @@ def main():
     the_chef = Chef()
     games.screen.add(the_chef)
     the_pan = Pan()
+    the_pan.bottom
     games.screen.add(the_pan)
     games.mouse.is_visible = False
     games.screen.event_grab = True
