@@ -4,13 +4,7 @@ from livewires import games, color
 import random
 
 
-class Screen_game(games.Screen):
-    """Экран игры"""
-    bg_image = games.load_image("images/bg_stone.jpg", transparent=False)
-
-    def __init__(self):
-        super(Screen_game, self).__init__(width=640, height=480, fps=50)
-        self.background = Screen_game.bg_image
+games.init(screen_width=640, screen_height=480, fps=50)
 
 
 class Cat(games.Sprite):
@@ -27,6 +21,8 @@ class Cat(games.Sprite):
             self.left = 0
         if self.right > games.screen.width:
             self.right = games.screen.width
+
+        self.tach_dog()
         """
         if self.x > games.screen.width:
             self.image = Cat.image_cat_l
@@ -34,6 +30,23 @@ class Cat(games.Sprite):
         elif self.x < 0:
             self.image = Cat.image_cat_r
             self.dx = -self.dx"""
+
+    def tach_dog(self):
+        """ Проверяет, упала ли собака на кота. """
+        for dog in self.overlapping_sprites:
+            dog.handle_caught()
+            self.end_game()
+
+    def end_game(self):
+        """ Завершает игру. """
+        end_message = games.Message(value="Game Over",
+                                    size=90,
+                                    color=color.red,
+                                    x=games.screen.width / 2,
+                                    y=games.screen.height / 2,
+                                    lifetime=5 * games.screen.fps,
+                                    after_death=games.screen.quit)
+        games.screen.add(end_message)
 
 
 class Dog(games.Sprite):
@@ -47,16 +60,38 @@ class Dog(games.Sprite):
     def update(self):
         pass
 
-    
+    def handle_caught(self):
+        self.destroy()
+
+
+class DropDog(games.Sprite):
+    image_piksel = games.load_image("images/1piksel.bmp")
+
+    def __init__(self, odd_change=200):
+        self.odd_change = odd_change
+        self.time_til_drop = 0
+        super(DropDog, self).__init__(image=DropDog.image_piksel)
+
+    def update(self):
+        if self.time_til_drop > 0:
+            self.time_til_drop -= 1
+        else:
+            new_dog = Dog()
+            games.screen.add(new_dog)
+            self.time_til_drop = self.odd_change
 
 def main():
     # инициализация игры
-    the_screen = Screen_game()
+    wall_image = games.load_image("images/bg_stone.jpg", transparent=False)
+    games.screen.background = wall_image
     the_cat = Cat()
-    the_screen.add(the_cat)
+    games.screen.add(the_cat)
     the_dog = Dog()
-    the_screen.add(the_dog)
-    the_screen.mainloop()
+    games.screen.add(the_dog)
+    the_drop_dog = DropDog()
+    games.screen.add(the_drop_dog)
+
+    games.screen.mainloop()
 
 # запуск игры
 main()
